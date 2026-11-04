@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  Barbearia L.C · Agenda online · Site Cinematográfico por Labrego IA (labregoia.com.br)
+  Projeto: LBG-SC-20261104-086B96C0A0 · Assinatura LBG-SC-2026-v1
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agendar horário | Barbearia L.C</title>
+  <meta name="description" content="Agende online na Barbearia L.C, Jardim Pedreira, São Paulo: corte, barba, sobrancelha, desenho e luzes. Segunda a sábado.">
+  <meta name="generator" content="Site Cinematográfico · Labrego IA">
+  <meta name="author" content="Labrego IA · labregoia.com.br">
+  <meta property="og:title" content="Agendar horário | Barbearia L.C">
+  <meta property="og:description" content="Escolha o serviço, o dia e o horário livre. Sua cadeira tá esperando.">
+  <meta property="og:image" content="assets/frames/desktop/f_0001.webp">
+  <meta name="theme-color" content="#121010">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css?v=1">
+  <link rel="stylesheet" href="agenda.css?v=1">
+</head>
+<body>
+
+<header class="topo rolou">
+  <a href="./" class="marca" aria-label="Barbearia L.C, voltar ao início">
+    <img class="marca-logo" src="assets/logo.png" alt="" width="515" height="474">
+    <span class="marca-texto">Barbearia L.C<small>desde 2003</small></span>
+  </a>
+  <nav class="menu" aria-label="Seções">
+    <a href="./#sobre">A casa</a>
+    <a href="./#servicos">Serviços</a>
+    <a href="./#local">Onde estamos</a>
+  </nav>
+</header>
+
+<main class="agenda">
+  <img class="arte arte--fundo arte--suave" src="assets/img/contato.webp?v=2" alt="">
+
+  <div class="painel agenda-painel">
+    <span class="rotulo">Agenda online</span>
+    <h1>Agende seu <em>horário</em></h1>
+    <p class="agenda-intro">Seg a qui, 9h às 18h45 · sex e sáb, 8h às 18h45, na Estrada do Alvarenga, 2047 · Jardim Pedreira. Escolha o serviço e veja os horários livres.</p>
+
+    <div id="fluxo">
+      <section class="etapa" aria-labelledby="t1">
+        <div class="etapa-titulo"><span>01</span><h2 id="t1">Serviço</h2></div>
+        <div class="servicos-opcoes" id="servicos" role="radiogroup" aria-labelledby="t1">
+          <p class="aviso">Carregando serviços…</p>
+        </div>
+      </section>
+
+      <section class="etapa" id="etapa-dia" aria-labelledby="t2" hidden>
+        <div class="etapa-titulo"><span>02</span><h2 id="t2">Dia</h2></div>
+        <div class="cal">
+          <div class="cal-topo">
+            <span class="cal-mes" id="cal-mes"></span>
+            <div class="cal-nav">
+              <button type="button" id="cal-ant" aria-label="Mês anterior">‹</button>
+              <button type="button" id="cal-prox" aria-label="Próximo mês">›</button>
+            </div>
+          </div>
+          <div class="cal-semana" aria-hidden="true"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+          <div class="cal-grade" id="cal-grade"></div>
+        </div>
+      </section>
+
+      <section class="etapa" id="etapa-hora" aria-labelledby="t3" hidden>
+        <div class="etapa-titulo"><span>03</span><h2 id="t3">Horário</h2></div>
+        <div class="horas" id="horas" aria-live="polite"></div>
+      </section>
+
+      <section class="etapa" id="etapa-dados" aria-labelledby="t4" hidden>
+        <div class="etapa-titulo"><span>04</span><h2 id="t4">Seus dados</h2></div>
+        <div class="resumo" id="resumo"></div>
+        <form class="form" id="form-agenda" novalidate>
+          <div class="campo">
+            <label for="a-nome">Nome</label>
+            <input id="a-nome" name="nome" autocomplete="name" required maxlength="80">
+          </div>
+          <div class="campo">
+            <label for="a-tel">WhatsApp com DDD</label>
+            <input id="a-tel" name="telefone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="(11) 90000-0000">
+          </div>
+          <div class="campo campo--inteiro">
+            <label for="a-obs">Observação (opcional)</label>
+            <textarea id="a-obs" name="obs" rows="3" maxlength="500" placeholder="Ex.: degradê baixo, quero manter o tamanho em cima…"></textarea>
+          </div>
+          <button type="submit" class="botao campo--inteiro">Confirmar agendamento</button>
+          <p class="form-status campo--inteiro" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+
+    <section class="sucesso" id="sucesso" hidden aria-live="polite">
+      <div class="selo" aria-hidden="true">✂</div>
+      <h2>Horário reservado</h2>
+      <p id="sucesso-texto"></p>
+      <div class="acoes">
+        <a class="botao" id="sucesso-whats" target="_blank" rel="noopener">Avisar a barbearia no WhatsApp</a>
+        <a class="botao botao--linha" href="agendar.html">Agendar outro serviço</a>
+      </div>
+    </section>
+
+    <a class="voltar" href="./">← Voltar ao site</a>
+  </div>
+</main>
+
+<footer class="rodape">
+  <div class="painel rodape-painel">
+    <span class="marca"><img class="selo-logo" src="assets/logo.png" alt="" width="515" height="474"><span class="marca-texto">Barbearia L.C</span></span>
+    <span>Estrada do Alvarenga, 2047 · Jardim Pedreira · São Paulo</span>
+    <span>© <span data-ano></span> Barbearia L.C</span>
+    <a class="credito" href="https://labregoia.com.br" target="_blank" rel="noopener">Site por Labrego IA</a>
+  </div>
+</footer>
+
+<a class="whats visivel" target="_blank" rel="noopener" aria-label="Conversar no WhatsApp">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3Zm0 23.1c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.2 1.3-4-.3-.4a10.4 10.4 0 0 1-1.6-5.6C5.5 9.8 10.2 5.2 16 5.2s10.5 4.6 10.5 10.4S21.8 26.1 16 26.1Zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.7 5 .8.4 1.4.6 1.9.7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4Z"/></svg>
+</a>
+<a class="insta" href="https://www.instagram.com/barbearialc1/" target="_blank" rel="noopener" aria-label="Ver o Instagram @barbearialc1">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js?v=1"></script>
+<script src="agendar.js?v=1"></script>
+<script src="padrao.js?v=1"></script>
+</body>
+</html>

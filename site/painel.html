@@ -1,0 +1,90 @@
+<!doctype html>
+<!--
+  Barbearia L.C · Painel da agenda · Site Cinematográfico por Labrego IA (labregoia.com.br)
+  Projeto: LBG-SC-20261104-086B96C0A0 · Assinatura LBG-SC-2026-v1
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel da agenda | Barbearia L.C</title>
+  <meta name="generator" content="Site Cinematográfico · Labrego IA">
+  <meta name="author" content="Labrego IA · labregoia.com.br">
+  <meta name="theme-color" content="#121010">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css?v=1">
+  <link rel="stylesheet" href="agenda.css?v=1">
+</head>
+<body>
+
+<header class="topo rolou">
+  <a href="./" class="marca" aria-label="Barbearia L.C, voltar ao site">
+    <img class="marca-logo" src="assets/logo.png" alt="" width="515" height="474">
+    <span class="marca-texto">Barbearia L.C<small>Painel da agenda</small></span>
+  </a>
+  <nav class="menu"><button type="button" class="menu-cta botao--linha" id="sair" hidden style="font:inherit;color:inherit;cursor:pointer">Sair</button></nav>
+</header>
+
+<main class="agenda">
+  <div class="painel agenda-painel painel-adm">
+
+    <section id="tela-login" hidden>
+      <span class="rotulo">Acesso restrito</span>
+      <h1>Painel da agenda</h1>
+      <p>Digite o e-mail autorizado. Você vai receber um link de acesso; abra-o neste mesmo aparelho.</p>
+      <form class="form-login" id="form-login" novalidate>
+        <label class="campo"><span style="font-size:13px;color:var(--texto-suave)">E-mail</span>
+          <input name="email" type="email" autocomplete="email" required>
+        </label>
+        <button class="botao" type="submit">Enviar link</button>
+      </form>
+      <p class="form-status" id="login-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="tela-sem-acesso" hidden>
+      <span class="rotulo">Acesso restrito</span>
+      <h1>Sem permissão</h1>
+      <p id="sem-acesso-texto">Este e-mail não está autorizado a ver a agenda.</p>
+    </section>
+
+    <section id="tela-agenda" hidden>
+      <span class="rotulo">Agenda</span>
+      <div class="painel-barra">
+        <h1 id="titulo-dia" style="margin:0;font-size:clamp(30px,4vw,48px)"></h1>
+        <div class="painel-dia">
+          <button class="botao botao--linha botao--pequeno" type="button" id="dia-ant" aria-label="Dia anterior">‹</button>
+          <input type="date" id="dia" aria-label="Escolher dia">
+          <button class="botao botao--linha botao--pequeno" type="button" id="dia-prox" aria-label="Próximo dia">›</button>
+          <button class="botao botao--linha botao--pequeno" type="button" id="dia-hoje">Hoje</button>
+        </div>
+      </div>
+
+      <ul class="lista" id="lista" aria-live="polite"></ul>
+
+      <div class="etapa">
+        <div class="etapa-titulo"><span>✂</span><h2>Bloquear horário</h2></div>
+        <form class="form-bloqueio" id="form-bloqueio" novalidate>
+          <label>Serviço
+            <select name="servico" id="b-servico"><option value="">Todos os serviços</option></select>
+          </label>
+          <label>De <input type="time" name="de" value="12:00" step="1800" required></label>
+          <label>Até <input type="time" name="ate" value="13:00" step="1800" required></label>
+          <label>Motivo <input name="motivo" maxlength="120" placeholder="Almoço, folga, feriado…"></label>
+          <button class="botao botao--pequeno" type="submit">Bloquear</button>
+        </form>
+        <p class="form-status" id="bloqueio-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js?v=1"></script>
+<script src="painel.js?v=1"></script>
+<script src="padrao.js?v=1"></script>
+</body>
+</html>

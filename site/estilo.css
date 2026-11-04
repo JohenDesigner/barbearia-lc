@@ -1,0 +1,339 @@
+/* Site Cinematográfico · © 2026 Labrego IA · LBG-SC-2026-v1 */
+
+/* ── Tokens: ajuste pela identidade visual do cliente ───────────────────── */
+:root {
+  --fundo: #121010;          /* MESMA cor usada nos prompts das imagens */
+  --fundo-2: #1c1918;
+  --texto: #eee7dc;
+  --texto-suave: #b3aba0;
+  --acento: #c9a46a;         /* dourado envelhecido */
+  --vermelho: #b32d31;       /* vermelho do poste do logo */
+  --acento-texto: #121010;   /* texto sobre o acento */
+  --linha: rgb(238 231 220 / 0.13);
+  --painel: rgb(18 16 16 / 0.66);
+  --mistura: lighten;        /* tema escuro: lighten | tema claro: multiply */
+
+  --fonte-titulo: "Oswald", "Arial Narrow", sans-serif;
+  --fonte-texto: "Manrope", system-ui, sans-serif;
+
+  --raio: 18px;
+  --gutter: clamp(16px, 4vw, 56px);
+  --largura: 1240px;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+}
+/* Tema claro (marcas de luz, saúde, casamento etc.): troque os tokens assim
+:root {
+  --fundo: #f4efe7; --fundo-2: #ebe4d8; --texto: #1d1a16; --texto-suave: #5d564c;
+  --linha: rgb(29 26 22 / .12); --painel: rgb(244 239 231 / .7); --mistura: multiply;
+}
+*/
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  background: var(--fundo);
+  color: var(--texto);
+  font: 400 clamp(16px, 1.05vw, 18px)/1.65 var(--fonte-texto);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--fonte-titulo); font-weight: 300; line-height: 1.08; margin: 0 0 .5em; letter-spacing: -.01em; text-wrap: balance; }
+h1 { font-size: clamp(38px, 6.2vw, 96px); }
+h2 { font-size: clamp(32px, 4.2vw, 64px); }
+h3 { font-size: clamp(21px, 1.8vw, 27px); font-weight: 500; }
+p { margin: 0 0 1em; color: var(--texto-suave); text-wrap: pretty; }
+
+/* ── Topo ──────────────────────────────────────────────────────────────── */
+.topo {
+  position: fixed; inset: 0 0 auto; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 18px var(--gutter);
+  transition: background .4s var(--ease), backdrop-filter .4s;
+}
+.topo.rolou { background: rgb(18 16 16 / .6); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.marca { text-decoration: none; display: flex; align-items: center; }
+.marca-logo { height: 34px; width: auto; }
+.marca-texto { font-family: var(--fonte-titulo); font-size: 22px; letter-spacing: .02em; }
+.menu { display: flex; gap: 28px; align-items: center; font-size: 14px; letter-spacing: .04em; }
+.menu a { text-decoration: none; opacity: .8; transition: opacity .3s; }
+.menu a:hover { opacity: 1; }
+.menu-cta { border: 1px solid var(--linha); padding: 9px 16px; border-radius: 999px; opacity: 1 !important; }
+@media (max-width: 760px) { .menu a:not(.menu-cta) { display: none; } }
+
+/* ── Abertura cinematográfica ──────────────────────────────────────────── */
+.cine { position: relative; height: var(--altura, 400vh); }
+.cine-palco { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.cine-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cine-vinheta {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / .45) 100%),
+    linear-gradient(to bottom, transparent 70%, var(--fundo) 100%);
+}
+.momento {
+  position: absolute; inset: auto var(--gutter) 12vh; max-width: 640px;
+  transform: translateY(24px);
+  transition: transform .9s var(--ease);
+  pointer-events: none;
+}
+/* O fade fica no próprio painel: opacity/filter no pai desliga o backdrop-filter
+   durante a transição e o vidro "estala" no fim (entrada e saída). */
+.momento > .painel { opacity: 0; transition: opacity .7s var(--ease); }
+.momento.ativo { transform: none; pointer-events: auto; }
+.momento.ativo > .painel { opacity: 1; }
+.momento--direita { left: auto; right: var(--gutter); }
+.momento--centro { left: 50%; right: auto; transform: translate(-50%, 24px); text-align: center; width: min(640px, calc(100% - 2 * var(--gutter))); }
+.momento--centro.ativo { transform: translate(-50%, 0); }
+.titulo-abertura { margin-bottom: .3em; }
+.apoio { font-size: clamp(16px, 1.3vw, 20px); margin: 0; }
+.destaque { font-family: var(--fonte-titulo); font-size: clamp(24px, 2.8vw, 42px); line-height: 1.2; color: var(--texto); margin: 0 0 .6em; }
+.destaque:last-child { margin: 0; }
+.cine-dica {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: grid; justify-items: center; gap: 8px; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; opacity: .6;
+  transition: opacity .5s;
+}
+.cine-dica span { width: 1px; height: 38px; background: linear-gradient(var(--texto), transparent); animation: dica 2s var(--ease) infinite; }
+@keyframes dica { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.cine.andou .cine-dica { opacity: 0; }
+
+/* ── Painéis (todo texto mora num painel) ──────────────────────────────── */
+.painel {
+  position: relative;
+  background: var(--painel);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: clamp(24px, 3.2vw, 48px);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+}
+.painel--vidro { background: rgb(18 16 16 / .42); }
+.painel > :last-child { margin-bottom: 0; }
+.rotulo { display: block; font-size: 12px; letter-spacing: .3em; color: var(--acento); margin-bottom: 18px; }
+
+/* ── Seções ────────────────────────────────────────────────────────────── */
+.secao {
+  position: relative; isolation: isolate; overflow: clip;
+  min-height: 100vh; padding: 18vh var(--gutter);
+  display: grid; align-content: center;
+}
+.secao-grade { width: 100%; max-width: var(--largura); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 560px) 1fr; }
+.secao-grade--direita { grid-template-columns: 1fr minmax(0, 560px); }
+.secao-grade--direita > .painel { grid-column: 2; }
+.secao--larga { gap: 28px; justify-items: center; }
+.painel--cabecalho { width: 100%; max-width: var(--largura); }
+.cartoes { width: 100%; max-width: var(--largura); display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.cartao h3 { margin-bottom: .4em; }
+.cartao { transition: transform .5s var(--ease), border-color .5s; }
+.cartao:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--acento) 50%, transparent); }
+.passos { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: p; display: grid; gap: 22px; }
+.passos li { counter-increment: p; display: grid; grid-template-columns: 42px 1fr; column-gap: 12px; }
+.passos li::before { content: counter(p, decimal-leading-zero); grid-row: span 2; font-family: var(--fonte-titulo); color: var(--acento); font-size: 22px; }
+.passos strong { font-weight: 600; }
+.passos span { color: var(--texto-suave); }
+
+/* ── Arte: imagens fundidas ao fundo (nunca retângulo com borda) ───────── */
+.arte {
+  position: absolute; z-index: -1; pointer-events: none;
+  object-fit: cover; mix-blend-mode: var(--mistura);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.arte--direita, .arte--esquerda { top: 0; bottom: 0; width: 64vw; height: 100%; }
+.arte--direita {
+  right: 0;
+  -webkit-mask-image: linear-gradient(to left, #000 38%, transparent 96%), linear-gradient(to bottom, transparent, #000 18%, #000 80%, transparent);
+          mask-image: linear-gradient(to left, #000 38%, transparent 96%), linear-gradient(to bottom, transparent, #000 18%, #000 80%, transparent);
+}
+.arte--esquerda {
+  left: 0;
+  -webkit-mask-image: linear-gradient(to right, #000 38%, transparent 96%), linear-gradient(to bottom, transparent, #000 18%, #000 80%, transparent);
+          mask-image: linear-gradient(to right, #000 38%, transparent 96%), linear-gradient(to bottom, transparent, #000 18%, #000 80%, transparent);
+}
+.arte--fundo {
+  inset: 0; width: 100%; height: 100%; opacity: .5;
+  /* closest-side: a elipse zera exatamente na borda, então nunca sobra linha reta */
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent 100%), linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+          mask-image: radial-gradient(closest-side, #000 35%, transparent 100%), linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+.arte--suave { opacity: .32; }
+/* Parallax leve aplicado pelo app.js */
+.arte[data-parallax] { will-change: transform; }
+
+/* ── Contato ───────────────────────────────────────────────────────────── */
+.secao--contato { justify-items: center; }
+.painel--form { width: 100%; max-width: 760px; }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.campo { display: grid; gap: 6px; }
+.campo--inteiro { grid-column: 1 / -1; }
+.campo label { font-size: 13px; letter-spacing: .04em; color: var(--texto-suave); }
+.campo input, .campo textarea {
+  width: 100%; font: inherit; color: var(--texto);
+  background: rgb(255 255 255 / .04); border: 1px solid var(--linha); border-radius: 12px;
+  padding: 14px 16px; transition: border-color .3s, background .3s; resize: vertical;
+}
+.campo input:focus, .campo textarea:focus { outline: none; border-color: var(--acento); background: rgb(255 255 255 / .07); }
+.campo.erro input { border-color: #d9776b; }
+.pote { position: absolute; left: -9999px; }
+.form-status { min-height: 1.4em; margin: 0; font-size: 14px; }
+.form-status.ok { color: var(--acento); }
+.form-status.falha { color: #e39a90; }
+@media (max-width: 640px) { .form { grid-template-columns: 1fr; } }
+
+/* ── Botões ────────────────────────────────────────────────────────────── */
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font: 600 15px/1 var(--fonte-texto); letter-spacing: .02em; text-decoration: none; cursor: pointer;
+  color: var(--acento-texto); background: var(--acento); border: 0; border-radius: 999px;
+  padding: 17px 30px; transition: transform .4s var(--ease), filter .3s;
+}
+.botao:hover { transform: translateY(-2px); filter: brightness(1.08); }
+.botao[disabled] { opacity: .6; cursor: progress; }
+
+/* ── WhatsApp flutuante ────────────────────────────────────────────────── */
+.whats {
+  position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 60;
+  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+  background: #25d366; color: #fff; box-shadow: 0 10px 30px rgb(0 0 0 / .35);
+  transform: scale(0); transition: transform .5s var(--ease);
+}
+.whats.visivel { transform: scale(1); }
+.whats:hover { transform: scale(1.07); }
+.whats svg { width: 30px; height: 30px; }
+.whats::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #25d366; animation: pulso 2.6s ease-out infinite; }
+@keyframes pulso { from { transform: scale(1); opacity: .7; } to { transform: scale(1.6); opacity: 0; } }
+
+/* ── Rodapé ────────────────────────────────────────────────────────────── */
+.rodape { padding: 0 var(--gutter) 40px; }
+.rodape-painel { max-width: var(--largura); margin: 0 auto; display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--texto-suave); padding: 24px 32px; }
+.credito { font-size: 12px; opacity: .6; text-decoration: none; letter-spacing: .04em; }
+.credito:hover { opacity: 1; }
+
+/* ── Revelar ao rolar ──────────────────────────────────────────────────── */
+.revelar { opacity: 0; transform: translateY(40px); transition: opacity 1s var(--ease), transform 1.2s var(--ease); }
+.revelar.visto { opacity: 1; transform: none; }
+
+/* ── Celular ───────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .secao { padding: 14vh var(--gutter); min-height: auto; }
+  .secao-grade, .secao-grade--direita { grid-template-columns: 1fr; }
+  .secao-grade--direita > .painel { grid-column: 1; }
+  .arte--direita, .arte--esquerda { left: 0; right: 0; width: 100%; height: 70%; opacity: .55;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 55%, transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 55%, transparent); }
+  .momento, .momento--direita { left: var(--gutter); right: var(--gutter); bottom: 10vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .revelar, .momento:first-of-type, .momento:first-of-type > .painel { opacity: 1; transform: none; filter: none; }
+  .cine { height: 100svh; }
+  .momento:not(:first-of-type), .cine-dica { display: none; }
+}
+
+
+@media (max-width: 860px) {
+  .momento, .momento--direita, .momento--centro { bottom: max(10vh, 164px); }
+  .momento--centro { left: var(--gutter); right: var(--gutter); width: auto; transform: translateY(24px); }
+  .momento--centro.ativo { transform: none; }
+}
+#servicos .arte--fundo { opacity: .32; }
+/* Imagens laterais inteiras (sem recorte/zoom), centralizadas na seção */
+@media (min-width: 861px) {
+  .arte--direita, .arte--esquerda {
+    --l: min(62vw, 1280px);
+    width: var(--l); height: calc(var(--l) * 9 / 16);
+    top: 0; bottom: 0; margin: auto 0;
+  }
+}
+
+/* ── Instagram flutuante (acima do WhatsApp, aparece junto com ele) ───── */
+.insta {
+  position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: calc(max(18px, env(safe-area-inset-bottom)) + 70px); z-index: 60;
+  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; color: #fff;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  box-shadow: 0 10px 30px rgb(0 0 0 / .35);
+  transform: scale(0); transition: transform .5s var(--ease) .06s;
+}
+.whats.visivel + .insta { transform: scale(1); }
+.whats.visivel + .insta:hover { transform: scale(1.07); }
+.insta svg { width: 28px; height: 28px; }
+
+/* ── Nossos trabalhos (fotos reais do Instagram) ───────────────────────── */
+.trab-cabecalho { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 18px; }
+.trab-cabecalho h2 { margin: 0; }
+.trabalhos { width: 100%; max-width: var(--largura); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.trabalho { position: relative; display: block; overflow: hidden; border-radius: var(--raio); border: 1px solid var(--linha); aspect-ratio: 4 / 5; background: var(--fundo-2); text-decoration: none; }
+.trabalho img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease), filter .6s; filter: saturate(.92) contrast(1.02); }
+.trabalho::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(18 16 16 / .88) 0%, rgb(18 16 16 / .15) 42%, transparent 60%); pointer-events: none; }
+.trabalho span { position: absolute; left: 18px; right: 18px; bottom: 16px; z-index: 1; font-family: var(--fonte-titulo); font-size: clamp(19px, 1.6vw, 24px); line-height: 1.15; color: var(--texto); }
+.trabalho small { display: block; font-family: var(--fonte-texto); font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--acento); margin-bottom: 4px; }
+.trabalho:hover img { transform: scale(1.05); filter: saturate(1) contrast(1.04); }
+.trabalho:hover { border-color: color-mix(in srgb, var(--acento) 50%, transparent); }
+@media (max-width: 860px) { .trabalhos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .trabalho span { left: 12px; right: 12px; bottom: 10px; } }
+
+/* ── Padrão orgânico da marca (fundo vivo) ─────────────────────────────── */
+body::before {
+  content: ""; position: fixed; inset: -12% -8%; z-index: -1; pointer-events: none;
+  background: url("assets/padrao-lc.svg?v=2") center / cover no-repeat;
+  transform: translate3d(0, calc(var(--padrao-y, 0) * -1px), 0);
+  animation: padrao-respira 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes padrao-respira {
+  from { scale: 1; rotate: 0deg; }
+  to   { scale: 1.08; rotate: -2.5deg; }
+}
+@media (prefers-reduced-motion: reduce) { body::before { animation: none; transform: none; } }
+
+.rodape .marca { gap: 14px; }
+
+/* ── Barbearia L.C ─────────────────────────────────────────────────────── */
+h1, h2, h3 { font-weight: 500; text-transform: uppercase; letter-spacing: .01em; line-height: 1.02; }
+h1 { font-size: clamp(40px, 6vw, 92px); }
+h2 { font-size: clamp(34px, 4.4vw, 66px); }
+h1 em, h2 em { font-style: normal; color: var(--acento); }
+.destaque { font-family: var(--fonte-titulo); text-transform: uppercase; font-weight: 500; letter-spacing: .01em; }
+.marca { gap: 12px; }
+.marca-logo { height: 46px; width: auto; }
+.marca-texto { font-family: var(--fonte-titulo); text-transform: uppercase; font-size: 21px; font-weight: 500; letter-spacing: .06em; line-height: 1; }
+.marca-texto small { display: block; font-family: var(--fonte-texto); text-transform: uppercase; font-size: 10px; letter-spacing: .32em; color: var(--acento); margin-top: 5px; }
+.rotulo { color: var(--vermelho); font-weight: 600; }
+.cartao .tag { color: var(--acento); }
+.selo-logo { height: 64px; width: auto; }
+.rodape .marca { gap: 14px; }
+/* faixa listrada do poste como detalhe no topo dos painéis de seção */
+.secao .painel:not(.cartao):not(.depoimento)::before {
+  content: ""; position: absolute; left: clamp(24px, 3.2vw, 48px); top: -1px; width: 64px; height: 4px; border-radius: 0 0 3px 3px;
+  background: repeating-linear-gradient(-45deg, var(--vermelho) 0 6px, #eee7dc 6px 10px, #2b4a8f 10px 16px, #eee7dc 16px 20px);
+}
+/* Imagens verticais (3:4) nas laterais, inteiras */
+@media (min-width: 861px) {
+  .arte--retrato { --l: min(36vw, 620px); width: var(--l); height: calc(var(--l) * 4 / 3); }
+  .arte--direita.arte--retrato { right: 4vw; }
+  .arte--esquerda.arte--retrato { left: 4vw; }
+}
+/* Avaliações do Google */
+.avaliacoes { width: 100%; max-width: var(--largura); margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr 1.4fr; gap: 18px; align-items: stretch; }
+.nota-google { text-align: center; display: grid; align-content: center; justify-items: center; }
+.nota-google .rotulo { margin-bottom: 6px; }
+.nota { font-family: var(--fonte-titulo); font-size: clamp(64px, 7vw, 104px); font-weight: 500; line-height: 1; color: var(--texto); }
+.estrelas { color: var(--acento); letter-spacing: .18em; font-size: 20px; margin: 6px 0 8px; }
+.nota-google p { margin: 0; font-size: 14px; }
+.depoimento { margin: 0; display: grid; align-content: center; }
+.depoimento p { font-family: var(--fonte-titulo); text-transform: uppercase; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.15; color: var(--texto); margin-bottom: .6em; }
+.depoimento cite { font-style: normal; font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--acento); }
+@media (max-width: 860px) { .avaliacoes { grid-template-columns: 1fr; } }
+.cartoes { grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); }
+.secao--larga { grid-template-columns: minmax(0, 1fr); }
+.cartao .tag { display: block; font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--acento); margin-bottom: 10px; }
+.cartao a { display: inline-block; margin-top: 6px; font-size: 14px; color: var(--acento); text-decoration: none; border-bottom: 1px solid currentColor; }
+.dados { list-style: none; padding: 0; margin: 4px 0 26px; display: grid; gap: 16px; }
+.dados li { display: grid; gap: 2px; }
+.dados small { font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--acento); }
+.dados span { color: var(--texto); }
+.botao--linha { background: transparent; color: var(--texto); border: 1px solid var(--linha); }
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; }

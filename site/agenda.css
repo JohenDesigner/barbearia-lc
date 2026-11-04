@@ -1,0 +1,88 @@
+/* Barbearia L.C · Agenda online · estilos próprios (usa os tokens de estilo.css) */
+
+.agenda { min-height: 100vh; padding: 120px var(--gutter) 90px; display: grid; justify-items: center; align-content: start; position: relative; isolation: isolate; overflow: clip; }
+.agenda .arte--fundo { position: fixed; }
+.agenda-painel { width: 100%; max-width: 860px; }
+.agenda-painel h1 { font-size: clamp(36px, 5vw, 64px); margin-bottom: .25em; }
+.agenda-intro { margin-bottom: 8px; }
+
+.etapa { border-top: 1px solid var(--linha); margin-top: 30px; padding-top: 26px; }
+.etapa[hidden] { display: none; }
+.etapa-titulo { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+.etapa-titulo span { font-family: var(--fonte-titulo); color: var(--acento); font-size: 22px; }
+.etapa-titulo h2 { font-size: clamp(22px, 2.2vw, 30px); margin: 0; }
+
+/* Serviços */
+.servicos-opcoes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px; }
+.opcao { position: relative; display: grid; gap: 4px; padding: 16px 18px; border: 1px solid var(--linha); border-radius: 14px; background: rgb(255 255 255 / .03); cursor: pointer; transition: border-color .25s, background .25s, transform .25s var(--ease); }
+.opcao:hover { border-color: color-mix(in srgb, var(--acento) 55%, transparent); transform: translateY(-2px); }
+.opcao input { position: absolute; opacity: 0; pointer-events: none; }
+.opcao strong { font-family: var(--fonte-titulo); font-size: 21px; font-weight: 500; }
+.opcao small { color: var(--texto-suave); font-size: 13px; letter-spacing: .04em; }
+.opcao:has(input:checked) { border-color: var(--acento); background: color-mix(in srgb, var(--acento) 14%, transparent); }
+.opcao:has(input:focus-visible) { outline: 2px solid var(--acento); outline-offset: 2px; }
+
+/* Calendário */
+.cal { max-width: 420px; }
+.cal-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-mes { font-family: var(--fonte-titulo); font-size: 22px; }
+.cal-nav { display: flex; gap: 6px; }
+.cal-nav button, .dia, .hora { font: inherit; color: var(--texto); background: transparent; border: 1px solid var(--linha); cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
+.cal-nav button { width: 38px; height: 38px; border-radius: 50%; font-size: 18px; line-height: 1; }
+.cal-nav button:disabled { opacity: .3; cursor: default; }
+.cal-semana, .cal-grade { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-semana span { text-align: center; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--texto-suave); padding: 4px 0; }
+.dia { aspect-ratio: 1; border-radius: 12px; font-size: 15px; }
+.dia:hover:not(:disabled) { border-color: var(--acento); }
+.dia:disabled { opacity: .25; cursor: default; border-color: transparent; }
+.dia[aria-pressed="true"] { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 600; }
+.dia.hoje { box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--acento) 70%, transparent); }
+
+/* Horários */
+.horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.hora { padding: 12px 0; border-radius: 999px; font-size: 15px; letter-spacing: .02em; }
+.hora:hover { border-color: var(--acento); }
+.hora[aria-pressed="true"] { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 600; }
+.aviso { color: var(--texto-suave); font-size: 15px; margin: 0; }
+.carregando { opacity: .6; }
+
+/* Resumo e confirmação */
+.resumo { display: grid; gap: 4px; padding: 16px 18px; border-radius: 14px; border: 1px dashed color-mix(in srgb, var(--acento) 45%, transparent); margin-bottom: 18px; }
+.resumo strong { font-family: var(--fonte-titulo); font-size: 22px; font-weight: 500; }
+.resumo span { color: var(--texto-suave); }
+.agenda .form { margin-top: 0; }
+
+.sucesso { text-align: center; padding: 10px 0; }
+.sucesso .selo { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--acento); color: var(--acento); font-size: 28px; }
+.sucesso h2 { margin-bottom: .3em; }
+.sucesso .acoes { justify-content: center; margin-top: 22px; }
+
+.voltar { display: inline-block; margin-top: 26px; font-size: 14px; color: var(--texto-suave); text-decoration: none; }
+.voltar:hover { color: var(--texto); }
+
+/* Painel */
+.painel-adm { max-width: 980px; }
+.painel-barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.painel-dia { display: flex; align-items: center; gap: 8px; }
+.painel-dia input { font: inherit; color: var(--texto); background: rgb(255 255 255 / .04); border: 1px solid var(--linha); border-radius: 12px; padding: 10px 12px; color-scheme: dark; }
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: 96px 1fr auto; gap: 6px 18px; align-items: center; padding: 14px 16px; border: 1px solid var(--linha); border-radius: 14px; background: rgb(255 255 255 / .03); }
+.item-hora { font-family: var(--fonte-titulo); font-size: 22px; color: var(--acento); }
+.item-info strong { display: block; }
+.item-info span { color: var(--texto-suave); font-size: 14px; }
+.item-info a { color: var(--acento); }
+.item.cancelado { opacity: .45; }
+.item.cancelado .item-hora { text-decoration: line-through; }
+.botao--pequeno { padding: 10px 16px; font-size: 13px; }
+.form-bloqueio { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.6fr auto; gap: 10px; align-items: end; }
+.form-bloqueio select, .form-bloqueio input { width: 100%; font: inherit; color: var(--texto); background: rgb(255 255 255 / .04); border: 1px solid var(--linha); border-radius: 12px; padding: 12px 12px; color-scheme: dark; }
+.form-bloqueio label { display: grid; gap: 6px; font-size: 13px; color: var(--texto-suave); }
+.form-login { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; margin-top: 16px; }
+
+@media (max-width: 760px) {
+  .agenda { padding-top: 96px; }
+  .item { grid-template-columns: 70px 1fr; }
+  .item > .botao { grid-column: 1 / -1; justify-self: start; }
+  .form-bloqueio, .form-login { grid-template-columns: 1fr 1fr; }
+  .form-bloqueio label:nth-child(1), .form-bloqueio label:nth-child(4), .form-bloqueio button, .form-login label { grid-column: 1 / -1; }
+}

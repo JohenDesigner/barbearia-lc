@@ -1,0 +1,23 @@
+{
+  "nome": "Barbearia L.C",
+  "slug": "barbearia-lc",
+  "nicho": "Barbearia masculina de bairro, desde 2003, Jardim Pedreira / Mar Paulista, zona sul de São Paulo",
+  "publico": "Homens e meninos da região que querem corte na régua, barba e atendimento de confiança",
+  "identidade": {
+    "logo": "Poste de barbeiro com coroa, tesouras e máquinas; preto e branco com vermelho e azul no poste",
+    "clima": "clássico, urbano, raiz de bairro, confiança, acabamento na régua",
+    "cores": { "fundo": "#121010", "texto": "#EEE7DC", "acento": "#C9A46A", "vermelho": "#A3262A" },
+    "fontes": { "titulo": "Oswald", "texto": "Manrope" }
+  },
+  "contato": {
+    "whatsapp": "5511940453278",
+    "mensagem": "Gostaria de fazer agendamento",
+    "email": "johenartegrafica@gmail.com",
+    "instagram": "https://www.instagram.com/barbearialc1/"
+  },
+  "endereco": "Estrada do Alvarenga, 2047 - Jardim Pedreira (Mar Paulista), São Paulo - SP, 04467-000",
+  "horario": { "seg-qui": "09:00-18:45", "sex-sab": "08:00-18:45", "dom": "fechado" },
+  "google": { "nota": 4.9, "avaliacoes": 22, "depoimentos": ["Ótima barbearia, profissionais excelentes!", "Satisfação, ótimo atendimento."] },
+  "servicos_sugeridos": ["Corte", "Barba", "Corte + Barba", "Sobrancelha", "Desenho / freestyle", "Luzes / platinado", "Corte infantil"],
+  "secoes": ["abertura", "servicos", "desde-2003", "trabalhos", "avaliacoes", "como-reservar", "onde-estamos", "contato"]
+}
