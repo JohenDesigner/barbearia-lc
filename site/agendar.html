@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilo.css?v=1">
-  <link rel="stylesheet" href="agenda.css?v=1">
+  <link rel="stylesheet" href="agenda.css?v=2">
 </head>
 <body>
 
@@ -41,7 +41,7 @@
   <div class="painel agenda-painel">
     <span class="rotulo">Agenda online</span>
     <h1>Agende seu <em>horário</em></h1>
-    <p class="agenda-intro">Seg a qui, 9h às 18h45 · sex e sáb, 8h às 18h45, na Estrada do Alvarenga, 2047 · Jardim Pedreira. Escolha o serviço e veja os horários livres.</p>
+    <p class="agenda-intro">Seg a qui, 9h às 18h45 · sex e sáb, 8h às 18h45, na Estrada do Alvarenga, 2047 · Jardim Pedreira. Escolha o serviço, o barbeiro e veja os horários livres.</p>
 
     <div id="fluxo">
       <section class="etapa" aria-labelledby="t1">
@@ -51,8 +51,12 @@
         </div>
       </section>
 
+      <section class="etapa" id="etapa-barbeiro" aria-labelledby="tb" hidden>
+        <div class="etapa-titulo"><span>02</span><h2 id="tb">Barbeiro</h2></div>
+        <div class="servicos-opcoes barbeiros-opcoes" id="barbeiros" role="radiogroup" aria-labelledby="tb"></div>
+      </section>
       <section class="etapa" id="etapa-dia" aria-labelledby="t2" hidden>
-        <div class="etapa-titulo"><span>02</span><h2 id="t2">Dia</h2></div>
+        <div class="etapa-titulo"><span>03</span><h2 id="t2">Dia</h2></div>
         <div class="cal">
           <div class="cal-topo">
             <span class="cal-mes" id="cal-mes"></span>
@@ -67,12 +71,12 @@
       </section>
 
       <section class="etapa" id="etapa-hora" aria-labelledby="t3" hidden>
-        <div class="etapa-titulo"><span>03</span><h2 id="t3">Horário</h2></div>
+        <div class="etapa-titulo"><span>04</span><h2 id="t3">Horário</h2></div>
         <div class="horas" id="horas" aria-live="polite"></div>
       </section>
 
       <section class="etapa" id="etapa-dados" aria-labelledby="t4" hidden>
-        <div class="etapa-titulo"><span>04</span><h2 id="t4">Seus dados</h2></div>
+        <div class="etapa-titulo"><span>05</span><h2 id="t4">Seus dados</h2></div>
         <div class="resumo" id="resumo"></div>
         <form class="form" id="form-agenda" novalidate>
           <div class="campo">
@@ -125,7 +129,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=2"></script>
-<script src="agendar.js?v=2"></script>
+<script src="agendar.js?v=3"></script>
 <script src="padrao.js?v=1"></script>
 </body>
 </html>

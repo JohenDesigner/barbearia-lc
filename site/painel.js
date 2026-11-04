@@ -13,7 +13,7 @@
   const horaSP = (date) => date.toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit" });
   const lerRange = (r) => { const m = String(r).match(/["\[(]?"?([^",]+)"?\s*,\s*"?([^"\])]+)"?/); const iso = (s) => new Date(s.trim().replace(" ", "T").replace(/([+-]\d{2})$/, "$1:00")); return [iso(m[1]), iso(m[2])]; };
 
-  let dia = hojeSP(), servicos = [];
+  let dia = hojeSP(), barbeiros = [];
 
   /* Login por link no e-mail */
   $("#form-login").addEventListener("submit", async (ev) => {
@@ -32,10 +32,10 @@
     $("#sair").hidden = false;
     const { data: ok } = await sb.rpc("is_admin");
     if (!ok) { $("#sem-acesso-texto").textContent = `${sessao.user.email} não está autorizado a ver a agenda.`; tela("#tela-sem-acesso"); return; }
-    if (!servicos.length && !window.__carregandoServ) { window.__carregandoServ = true;
-      const { data } = await sb.from("servicos").select("id, nome").order("ordem");
-      servicos = data || [];
-      for (const s of servicos) { const o = document.createElement("option"); o.value = s.id; o.textContent = s.nome; $("#b-servico").append(o); }
+    if (!barbeiros.length && !window.__carregandoBarb) { window.__carregandoBarb = true;
+      const { data } = await sb.from("barbeiros").select("id, nome").order("ordem");
+      barbeiros = data || [];
+      for (const b of barbeiros) for (const sel of ["#b-barbeiro", "#filtro-barbeiro"]) { const o = document.createElement("option"); o.value = b.id; o.textContent = b.nome; $(sel).append(o); }
     }
     tela("#tela-agenda");
     carregarDia();
@@ -48,17 +48,17 @@
     $("#titulo-dia").textContent = new Date(y, m - 1, d).toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
     const ini = new Date(`${dia}T00:00:00${TZ}`).toISOString(), fim = new Date(`${somaDias(dia, 1)}T00:00:00${TZ}`).toISOString();
     const faixa = `[${ini},${fim})`;
-    const lista = $("#lista");
+    const lista = $("#lista"), filtro = Number($("#filtro-barbeiro").value) || null;
     lista.innerHTML = `<li class="aviso">Carregando…</li>`;
     const [ag, bl] = await Promise.all([
-      sb.from("agendamentos").select("id, periodo, nome, telefone, obs, status, servicos(nome)").overlaps("periodo", faixa),
-      sb.from("bloqueios").select("id, periodo, motivo, servicos(nome)").overlaps("periodo", faixa),
+      sb.from("agendamentos").select("id, periodo, nome, telefone, obs, status, barbeiro_id, servicos(nome), barbeiros(nome)").overlaps("periodo", faixa),
+      sb.from("bloqueios").select("id, periodo, motivo, barbeiro_id, barbeiros(nome)").overlaps("periodo", faixa),
     ]);
     if (ag.error || bl.error) { lista.innerHTML = `<li class="aviso">Não consegui carregar a agenda. Atualize a página.</li>`; return; }
     const itens = [
       ...ag.data.map((a) => ({ tipo: "ag", ...a, quando: lerRange(a.periodo) })),
       ...bl.data.map((b) => ({ tipo: "bl", ...b, quando: lerRange(b.periodo) })),
-    ].sort((a, b) => a.quando[0] - b.quando[0]);
+    ].filter((it) => !filtro || it.barbeiro_id === null || it.barbeiro_id === filtro).sort((a, b) => a.quando[0] - b.quando[0]);
     lista.innerHTML = "";
     if (!itens.length) { lista.innerHTML = `<li class="aviso">Nenhum agendamento neste dia.</li>`; return; }
     for (const it of itens) {
@@ -68,14 +68,14 @@
       const info = document.createElement("div"); info.className = "item-info";
       const t = document.createElement("strong"), sub = document.createElement("span");
       if (it.tipo === "ag") {
-        t.textContent = `${it.nome} · ${it.servicos?.nome || ""}`;
+        t.textContent = `${it.nome} · ${it.servicos?.nome || ""} · ${it.barbeiros?.nome || ""}`;
         sub.append(`${horaSP(it.quando[0])} às ${horaSP(it.quando[1])} · `);
         const a = document.createElement("a"); a.href = `https://wa.me/${it.telefone}`; a.target = "_blank"; a.rel = "noopener";
         a.textContent = `+${it.telefone}`; sub.append(a);
         if (it.obs) sub.append(` · ${it.obs}`);
         if (it.status === "cancelado") sub.append(" · cancelado");
       } else {
-        t.textContent = `Bloqueado · ${it.servicos?.nome || "todos os serviços"}`;
+        t.textContent = `Bloqueado · ${it.barbeiros?.nome || "barbearia toda"}`;
         sub.textContent = `${horaSP(it.quando[0])} às ${horaSP(it.quando[1])}${it.motivo ? ` · ${it.motivo}` : ""}`;
       }
       info.append(t, document.createElement("br"), sub);
@@ -98,6 +98,7 @@
     }
   }
 
+  $("#filtro-barbeiro").addEventListener("change", () => carregarDia());
   $("#dia").addEventListener("change", (e) => { if (e.target.value) { dia = e.target.value; carregarDia(); } });
   $("#dia-ant").addEventListener("click", () => { dia = somaDias(dia, -1); carregarDia(); });
   $("#dia-prox").addEventListener("click", () => { dia = somaDias(dia, 1); carregarDia(); });
@@ -109,7 +110,7 @@
     const f = ev.target, st = $("#bloqueio-status");
     if (!f.de.value || !f.ate.value || f.ate.value <= f.de.value) { st.textContent = "O horário final precisa ser depois do inicial."; st.className = "form-status falha"; return; }
     const ini = new Date(`${dia}T${f.de.value}:00${TZ}`).toISOString(), fim = new Date(`${dia}T${f.ate.value}:00${TZ}`).toISOString();
-    const { error } = await sb.from("bloqueios").insert({ servico_id: f.servico.value ? Number(f.servico.value) : null, periodo: `[${ini},${fim})`, motivo: f.motivo.value.trim() || null });
+    const { error } = await sb.from("bloqueios").insert({ barbeiro_id: f.barbeiro.value ? Number(f.barbeiro.value) : null, periodo: `[${ini},${fim})`, motivo: f.motivo.value.trim() || null });
     if (error) { st.textContent = "Não foi possível bloquear. Tente de novo."; st.className = "form-status falha"; return; }
     st.textContent = "Horário bloqueado."; st.className = "form-status ok"; f.motivo.value = "";
     carregarDia();

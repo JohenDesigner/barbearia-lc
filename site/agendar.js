@@ -12,8 +12,9 @@
   $(".whats").href = wa(S.whatsapp.mensagem);
   document.querySelectorAll("[data-ano]").forEach((el) => (el.textContent = new Date().getFullYear()));
 
-  const estado = { servico: null, dia: null, hora: null, mes: null };
-  let servicos = [];
+  const estado = { servico: null, barbeiro: null, dia: null, hora: null, mes: null };
+  let servicos = [], barbeiros = [];
+  const SEM_PREF = { id: null, nome: "Sem preferência" };
 
   const hojeSP = () => {
     const p = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -39,6 +40,9 @@
       return;
     }
     servicos = data;
+    const rb = await sb.from("barbeiros").select("id, nome").eq("ativo", true).order("ordem");
+    barbeiros = rb.data || [];
+    desenharBarbeiros();
     caixa.innerHTML = "";
     const pedido = new URLSearchParams(location.search).get("servico");
     for (const s of data) {
@@ -52,8 +56,23 @@
     }
   }
 
-  function escolherServico(s, rolar = true) {
-    estado.servico = s; estado.hora = null;
+  /* 2 · Barbeiro */
+  function desenharBarbeiros() {
+    const caixa = $("#barbeiros"); caixa.innerHTML = "";
+    const pedido = (new URLSearchParams(location.search).get("barbeiro") || "").toLowerCase();
+    for (const b of [...barbeiros, SEM_PREF]) {
+      const l = document.createElement("label");
+      l.className = "opcao" + (b.id === null ? " opcao--qualquer" : "");
+      l.innerHTML = `<input type="radio" name="barbeiro" value="${b.id ?? ""}"><strong></strong><small>${b.id === null ? "o primeiro livre" : "barbeiro"}</small>`;
+      l.querySelector("strong").textContent = b.nome;
+      l.querySelector("input").addEventListener("change", () => escolherBarbeiro(b));
+      caixa.append(l);
+      if (pedido && b.nome.toLowerCase() === pedido) { l.querySelector("input").checked = true; estado.barbeiro = b; }
+    }
+  }
+
+  function escolherBarbeiro(b, rolar = true) {
+    estado.barbeiro = b; estado.hora = null;
     mostrar("#etapa-dia");
     if (!estado.mes) { const h = dataLocal(hojeSP()); estado.mes = new Date(h.getFullYear(), h.getMonth(), 1); }
     desenharCalendario();
@@ -61,7 +80,14 @@
     if (rolar) rolarPara($("#etapa-dia"));
   }
 
-  /* 2 · Calendário */
+  function escolherServico(s, rolar = true) {
+    estado.servico = s; estado.hora = null;
+    mostrar("#etapa-barbeiro");
+    if (estado.barbeiro) { escolherBarbeiro(estado.barbeiro, rolar); return; }
+    if (rolar) rolarPara($("#etapa-barbeiro"));
+  }
+
+  /* 3 · Calendário */
   function desenharCalendario() {
     const grade = $("#cal-grade"), m = estado.mes;
     const hoje = dataLocal(hojeSP());
@@ -87,29 +113,32 @@
   $("#cal-ant").addEventListener("click", () => { estado.mes = new Date(estado.mes.getFullYear(), estado.mes.getMonth() - 1, 1); desenharCalendario(); });
   $("#cal-prox").addEventListener("click", () => { estado.mes = new Date(estado.mes.getFullYear(), estado.mes.getMonth() + 1, 1); desenharCalendario(); });
 
-  /* 3 · Horários livres */
+  /* 4 · Horários livres */
   async function carregarHoras(rolar = false) {
     const caixa = $("#horas"), s = estado.servico, dia = estado.dia;
     mostrar("#etapa-hora"); mostrar("#etapa-dados", false);
     caixa.classList.add("carregando");
     caixa.innerHTML = `<p class="aviso">Buscando horários livres…</p>`;
     if (rolar) rolarPara($("#etapa-hora"));
-    const { data, error } = await sb.rpc("horarios_ocupados", { p_servico: s.id, p_dia: dia });
-    if (estado.dia !== dia || estado.servico !== s) return; // usuária trocou no meio
+    const bar = estado.barbeiro;
+    const { data, error } = await sb.rpc("ocupados_dia", { p_dia: dia });
+    if (estado.dia !== dia || estado.servico !== s || estado.barbeiro !== bar) return; // trocou no meio
     caixa.classList.remove("carregando");
     if (error) { caixa.innerHTML = `<p class="aviso">Não consegui consultar a agenda. Tente de novo em instantes.</p>`; return; }
-    const ocupados = (data || []).map((o) => [new Date(o.inicio).getTime(), new Date(o.fim).getTime()]);
+    const ocupados = (data || []).map((o) => [o.barbeiro_id, new Date(o.inicio).getTime(), new Date(o.fim).getTime()]);
+    const candidatos = bar.id === null ? barbeiros.map((b) => b.id) : [bar.id];
+    const livreCom = (id, ini, fim) => !ocupados.some(([b, a, z]) => (b === null || b === id) && ini < z && fim > a);
     const minimo = Date.now() + A.antecedenciaMin * 60000;
     const livres = [];
     const abreDia = (A.abrePorDia || {})[new Date(dia + "T12:00:00").getDay()] || A.abre;
     for (let t = minutos(abreDia); t + s.duracao_min <= minutos(A.fecha); t += A.passoMin) {
       const ini = instante(dia, t).getTime(), fim = ini + s.duracao_min * 60000;
       if (ini < minimo) continue;
-      if (ocupados.some(([a, b]) => ini < b && fim > a)) continue;
+      if (!candidatos.some((id) => livreCom(id, ini, fim))) continue;
       livres.push(t);
     }
     caixa.innerHTML = "";
-    if (!livres.length) { caixa.innerHTML = `<p class="aviso">Sem horários livres nesse dia para ${s.nome}. Escolha outro dia.</p>`; return; }
+    if (!livres.length) { caixa.innerHTML = `<p class="aviso">Sem horários livres nesse dia${bar.id === null ? "" : " com o " + bar.nome}. Escolha outro dia${bar.id === null ? "" : " ou outro barbeiro"}.</p>`; return; }
     for (const t of livres) {
       const b = document.createElement("button");
       b.type = "button"; b.className = "hora"; b.textContent = hhmm(t);
@@ -123,12 +152,12 @@
     }
   }
 
-  /* 4 · Dados e confirmação */
+  /* 5 · Dados e confirmação */
   function abrirDados() {
     const s = estado.servico, fim = estado.hora + s.duracao_min;
     $("#resumo").innerHTML = `<strong></strong><span></span>`;
     $("#resumo strong").textContent = s.nome;
-    $("#resumo span").textContent = `${diaLongo(estado.dia)} · ${hhmm(estado.hora)} às ${hhmm(fim)}`;
+    $("#resumo span").textContent = (estado.barbeiro.id === null ? "Barbeiro: o primeiro livre" : "Com o " + estado.barbeiro.nome) + " · " + `${diaLongo(estado.dia)} · ${hhmm(estado.hora)} às ${hhmm(fim)}`;
     const el = mostrar("#etapa-dados");
     rolarPara(el);
   }
@@ -146,7 +175,8 @@
 
     const s = estado.servico, inicio = instante(estado.dia, estado.hora);
     botao.disabled = true; avisar("Reservando seu horário…");
-    const { error } = await sb.rpc("agendar", { p_servico: s.id, p_inicio: inicio.toISOString(), p_nome: nome, p_telefone: telFinal, p_obs: obs || null });
+    const { data: res, error } = await sb.rpc("agendar", { p_servico: s.id, p_barbeiro: estado.barbeiro.id, p_inicio: inicio.toISOString(), p_nome: nome, p_telefone: telFinal, p_obs: obs || null });
+    const barbeiro = (Array.isArray(res) ? res[0]?.barbeiro : res?.barbeiro) || estado.barbeiro.nome;
     botao.disabled = false;
     if (error) {
       avisar(error.message && error.code === "P0001" ? error.message : "Não foi possível reservar agora. Tente de novo ou chame no WhatsApp.", "falha");
@@ -159,13 +189,13 @@
     if (S.contato.web3formsChave) {
       fetch("https://api.web3forms.com/submit", {
         method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ access_key: S.contato.web3formsChave, subject: `Novo agendamento: ${s.nome} · ${quando}`, from_name: "Agenda Barbearia L.C",
-          servico: s.nome, quando, nome, whatsapp: telFinal, observacao: obs || "-" }),
+        body: JSON.stringify({ access_key: S.contato.web3formsChave, subject: `Novo agendamento: ${s.nome} com ${barbeiro} · ${quando}`, from_name: "Agenda Barbearia L.C",
+          servico: s.nome, barbeiro, quando, nome, whatsapp: telFinal, observacao: obs || "-" }),
       }).catch(() => {});
     }
     mostrar("#fluxo", false);
-    $("#sucesso-texto").textContent = `${s.nome} · ${quando}. Te esperamos na Estrada do Alvarenga, 2047 · Jardim Pedreira.`;
-    $("#sucesso-whats").href = wa(`Olá! Acabei de agendar pelo site 💈\n\nServiço: ${s.nome}\nDia: ${quando}\nNome: ${nome}${obs ? `\nObs.: ${obs}` : ""}`);
+    $("#sucesso-texto").textContent = `${s.nome} com o ${barbeiro} · ${quando}. Te esperamos na Estrada do Alvarenga, 2047 · Jardim Pedreira.`;
+    $("#sucesso-whats").href = wa(`Olá! Acabei de agendar pelo site 💈\n\nServiço: ${s.nome}\nBarbeiro: ${barbeiro}\nDia: ${quando}\nNome: ${nome}${obs ? `\nObs.: ${obs}` : ""}`);
     rolarPara(mostrar("#sucesso"));
   });
 

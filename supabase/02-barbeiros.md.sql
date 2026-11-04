@@ -1,0 +1,4 @@
+-- Migração aplicada em 2026-11-04: agenda_por_barbeiro
+-- Tabela barbeiros (Luis, Victor, Nathan, Wesley, Michel); agendamentos.barbeiro_id (exclusion por barbeiro);
+-- bloqueios.barbeiro_id (nulo = barbearia toda); RPCs ocupados_dia(p_dia) e agendar(p_servico, p_barbeiro, ...) -> (id, barbeiro).
+-- p_barbeiro nulo = sem preferência (escolhe o livre com menos horários no dia). SQL completo no histórico de migrações do Supabase.

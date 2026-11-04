@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilo.css?v=1">
-  <link rel="stylesheet" href="agenda.css?v=1">
+  <link rel="stylesheet" href="agenda.css?v=2">
 </head>
 <body>
 
@@ -55,6 +55,7 @@
       <div class="painel-barra">
         <h1 id="titulo-dia" style="margin:0;font-size:clamp(30px,4vw,48px)"></h1>
         <div class="painel-dia">
+          <select id="filtro-barbeiro" aria-label="Filtrar por barbeiro"><option value="">Todos os barbeiros</option></select>
           <button class="botao botao--linha botao--pequeno" type="button" id="dia-ant" aria-label="Dia anterior">‹</button>
           <input type="date" id="dia" aria-label="Escolher dia">
           <button class="botao botao--linha botao--pequeno" type="button" id="dia-prox" aria-label="Próximo dia">›</button>
@@ -67,11 +68,11 @@
       <div class="etapa">
         <div class="etapa-titulo"><span>✂</span><h2>Bloquear horário</h2></div>
         <form class="form-bloqueio" id="form-bloqueio" novalidate>
-          <label>Serviço
-            <select name="servico" id="b-servico"><option value="">Todos os serviços</option></select>
+          <label>Barbeiro
+            <select name="barbeiro" id="b-barbeiro"><option value="">Barbearia toda</option></select>
           </label>
-          <label>De <input type="time" name="de" value="12:00" step="1800" required></label>
-          <label>Até <input type="time" name="ate" value="13:00" step="1800" required></label>
+          <label>De <input type="time" name="de" value="12:00" step="900" required></label>
+          <label>Até <input type="time" name="ate" value="13:00" step="900" required></label>
           <label>Motivo <input name="motivo" maxlength="120" placeholder="Almoço, folga, feriado…"></label>
           <button class="botao botao--pequeno" type="submit">Bloquear</button>
         </form>
@@ -84,7 +85,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=2"></script>
-<script src="painel.js?v=1"></script>
+<script src="painel.js?v=2"></script>
 <script src="padrao.js?v=1"></script>
 </body>
 </html>

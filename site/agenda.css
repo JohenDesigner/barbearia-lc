@@ -86,3 +86,7 @@
   .form-bloqueio, .form-login { grid-template-columns: 1fr 1fr; }
   .form-bloqueio label:nth-child(1), .form-bloqueio label:nth-child(4), .form-bloqueio button, .form-login label { grid-column: 1 / -1; }
 }
+
+/* Barbeiros */
+.barbeiros-opcoes .opcao--qualquer { border-style: dashed; }
+#filtro-barbeiro { font: inherit; font-size: 14px; color: var(--texto); background: var(--fundo-2); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 14px; }
