@@ -14,10 +14,10 @@ window.SITE = {
     assunto: "Novo contato pelo site Barbearia L.C",
   },
 
-  // Agenda online (Supabase) — preenchida na etapa da agenda.
+  // Agenda online (Supabase). A chave anon é pública por natureza; a segurança fica nas regras (RLS) do banco.
   agenda: {
-    url: "",
-    chave: "",
+    url: "https://emfopioitbzvjxdfriyg.supabase.co",
+    chave: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtZm9waW9pdGJ6dmp4ZGZyaXlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MDI5MTAsImV4cCI6MjEwOTM3ODkxMH0.QIk1qp7M2u5wQEP9L7PIzi08xgooqWAv8jyn0FnT3Hk",
     abre: "09:00",
     abrePorDia: { 5: "08:00", 6: "08:00" }, // sexta e sábado abrem às 8h (0 = domingo)
     fecha: "18:45",
